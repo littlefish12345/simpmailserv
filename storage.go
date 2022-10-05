@@ -25,6 +25,9 @@ type mailInfo struct {
 
 func getMailFolder(address string) string { //获取一个邮箱地址对应的文件夹
 	storagePath := path.Join(config.General.MailStoragePath, address)
+	if _, err := os.Stat(storagePath); os.IsNotExist(err) {
+		os.MkdirAll(storagePath, 0644)
+	}
 	return storagePath
 }
 
@@ -40,6 +43,9 @@ func getMailStoragePath(address string) string { //获取一个邮件应该储�
 func getMailAllInfo(address string) ([]mailInfo, error) { //获取全部邮件信息
 	var mailInfoList []mailInfo
 	err := filepath.Walk(getMailFolder(address), func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
 		if info.IsDir() {
 			return nil
 		}
