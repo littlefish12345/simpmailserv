@@ -1,0 +1,9 @@
+*.pem
+*.key
+*.exe
+*.db
+*.toml
+cache/
+mail/
+.vscode/
+.VSCodeCounter/
