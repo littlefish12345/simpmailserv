@@ -24,9 +24,11 @@ func stmpSendHandshake(targetAddress []string, targetDomain string, internalAddr
 	sort.Slice(mxRecords, func(i, j int) bool { return mxRecords[i].Pref < mxRecords[j].Pref }) //按照pref从小到大排序
 	conn := new(connStruct)
 	var supportStartTls bool = false
+	dialAddr, _ := net.ResolveTCPAddr("tcp", config.Smtp.Inbound.PlainListenAddress)
+	dialer := net.Dialer{LocalAddr: dialAddr, Timeout: time.Millisecond*time.Duration(config.Smtp.Outbound.RemoteConnectTimeoutMs)}
 	for _, mxRecord := range mxRecords { //尝试连接25端口
 		for i := 0; i < config.Smtp.Outbound.RemoteConnectRetryTimes; i++ {
-			plainConn, err := net.DialTimeout("tcp", mxRecord.Host+":25", time.Millisecond*time.Duration(config.Smtp.Outbound.RemoteConnectTimeoutMs))
+			plainConn, err := dialer.Dial("tcp", mxRecord.Host+":25")
 			if err == nil {
 				conn.plainConn = plainConn
 				conn.connType = 0x00

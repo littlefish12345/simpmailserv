@@ -3,6 +3,7 @@
 *.exe
 *.db
 *.toml
+simpmailserv
 cache/
 mail/
 .vscode/
